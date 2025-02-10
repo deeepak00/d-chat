@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: black;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 2em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #chat-box { 
+            width: 50%;
+            height: 300px; 
+            border: 2px solid white; 
+            overflow-y: auto; 
+            margin: 20px auto; 
+            padding: 10px;
+            background: whitesmoke;
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            display: block;
+            width: fit-content;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        input {
+            width: 40%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        button {
+            background: #ffcc00;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #ffdd44;
+        }
+
+        .username {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .join-message {
+            color: red;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>d-chat Welcomes you!</h2>
+    <div id="chat-box"></div>
+    <input type="text" id="message" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        var socket = io.connect("http://" + document.domain + ":" + location.port);
+
+        // Receive messages from the server
+        socket.on("message", function(msg) {
+            var chatBox = document.getElementById("chat-box");
+            var messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+            messageElement.innerHTML = msg;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        // Send message to the server
+        function sendMessage() {
+            var msg = document.getElementById("message").value;
+            socket.send(msg);
+            document.getElementById("message").value = "";
+        }
+    </script>
+
+</body>
+</html>
